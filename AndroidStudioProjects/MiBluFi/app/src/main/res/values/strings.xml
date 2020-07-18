@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">MiBluFi</string>
+    // Abrir APP
+    <string name="Inicio_description">Inicio de la APP</string>
+    <string name="Inicio_state">Iniciando la APP, comprobando disponibilidad y permisos del bluetooth</string>
+    // Activar Bluetooth
+    <string name="Bluetooth_title">ERROR</string>
+    <string name="Bluetooth_description">Es necesario tener activado el bluetooth para el uso de esta APP. ¿Desea dar los permisos necesarios para activar el bluetooth de este dispositivo</string>
+    <string name="Bluetooth_acept">Aceptar</string>
+    <string name="Bluetooth_cancel">Cancelar</string>
+    // Cerrar APP
+    <string name="Cerrar_title">ERROR</string>
+    <string name="Cerrar_description">Fallo al intentar iniciar el bluetooth o no encontrado esa funcionalidad en este dispositivo. La APP se va a cerrar</string>
+    <string name="Cerrar_acept">Aceptar</string>
+    // Inicio en modo cliente
+    <string name="Cliente_title">Buscando Conexión</string>
+    <string name="Cliente_description">Buscando dispositivo telefonillo remoto para conectarse. Asegurese de haber presionado el botón del telefonillo remoto y que este aun siga en estado Servidor bluetooth</string>
+    // Conectado con el telefonillo remoto
+    // Inicio en modo cliente
+    <string name="Conectado_title">Conectado con el telefonillo remoto</string>
+    <string name="Conectado_description">A continuación aparecerá dos campos para rellenar, el nombre de la red wifi y su contraseña. Al dar a aceptar se enviara esta información al dispositivo telefonillo remoto y este intentara una conexión</string>
+    <string name="Conectado_subtitle">Configuración WIFI</string>
+    <string name="Conectado_Name">Nombre red WIFI</string>
+    <string name="Conectado_RedName">Introduzca nombre</string>
+    <string name="Conectado_pass">Clave red WIFI</string>
+    <string name="Conectado_RedPass">Introduzca clave</string>
+    <string name="Conectado_acept">Aceptar</string>
+</resources>

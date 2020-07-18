@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">MiTelefonillo</string>
+    <string name="Ini_title">APP InterRemo</string>
+    <string name="Ini_IP">IP</string>
+    <string name="Ini_PORT">Puerto</string>
+    <string name="Ini_txt">Iniciar conexión con dispositivo remoto Interfono Remoto</string>
+    <string name="Ini_btn">Aceptar</string>
+    <string name="Con_title">APP InterRemo</string>
+    <string name="Con_coger">Coger llamada</string>
+    <string name="Con_colgar">Colgar llamada</string>
+    <string name="Con_abrir">Abrir puerta</string>
+    <string name="Con_hablar">HABLAR</string>
+    <string name="Con_cerrar">Cerrar APP</string>
+    <string name="Err_title">APP InterRemo</string>
+    <string name="Err_subTitle">Error</string>
+    <string name="Err_cerrar">Cerrar</string>
+</resources>
