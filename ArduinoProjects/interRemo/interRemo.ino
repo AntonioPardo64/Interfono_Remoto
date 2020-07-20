@@ -55,7 +55,7 @@ void setup() {
   xTaskCreate(codec_tx,"codec_tx",4000,NULL, 3,NULL);
   xTaskCreate(comunica,"comunica",4000,NULL, 2,NULL);
   xTaskCreate(confi,"confi",8000,NULL, 1,NULL);
-  //Serial.println("TASK lanzadas");
+  Serial.println("TASK lanzadas");
 }
 
 /***********************************************************************

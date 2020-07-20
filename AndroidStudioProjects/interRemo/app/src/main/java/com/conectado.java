@@ -240,6 +240,7 @@ public class conectado extends AppCompatActivity {
         estado.putBoolean("comunicacion", miRepositorio.comunicacion);
         estado.putBoolean("aviso", miRepositorio.aviso);
         estado.putBoolean("timbre", miRepositorio.timbre);
+        estado.putBoolean("llamada", miRepositorio.llamada);
         estado.putInt("color",color);
         estado.putBoolean("pulso",miRepositorio.pulso);
         estado.putBoolean("initPulso", initPulso);
@@ -267,12 +268,13 @@ public class conectado extends AppCompatActivity {
         miRepositorio.comunicacion = estado.getBoolean("comunicacion");
         miRepositorio.aviso = estado.getBoolean("aviso");
         miRepositorio.timbre = estado.getBoolean("timbre");
+        miRepositorio.llamada = estado.getBoolean("llamada");
         color = estado.getInt("color");
         miRepositorio.pulso = estado.getBoolean("pulso");
         initPulso = estado.getBoolean("initPulso");
 
         //Log.i("Timbre_con_onRestore","Al restaurar valores, cambia color boton timbre segun valor timbre | " + miRepositorio.timbre);
-        if(miRepositorio.timbre)
+        if(miRepositorio.llamada)
             btnCoger.setBackgroundColor(0xffff0000);
         else
             btnCoger.setBackgroundColor(0xFFD6D7D7);
@@ -295,7 +297,7 @@ public class conectado extends AppCompatActivity {
     @Subscribe
     public  void onEvent(CustomMessageEvent event){
         //Log.i("Timbre_con_evento","cambia color boton timbre segun valor timbre | " + miRepositorio.timbre);
-        if(miRepositorio.timbre)
+        if(miRepositorio.llamada)
                 btnCoger.setBackgroundColor(0xffff0000);
             else
                 btnCoger.setBackgroundColor(0xFFD6D7D7);
@@ -394,7 +396,7 @@ public class conectado extends AppCompatActivity {
         //Log.i("Colgar_con_colgar","Pulsar boton colgar, colagar cambia a true| " + miRepositorio.colgar);
         btnCoger.setBackgroundColor(0xFFD6D7D7);
         //Log.i("Timbre_con_colgar","pregunta si hay timbre o coger | " + miRepositorio.timbre);
-        if(miRepositorio.timbre || miRepositorio.coger) {
+        if(miRepositorio.llamada || miRepositorio.coger) {
             //miRepositorio.colgar = true;
             //miRepositorio.timbre = false;
             miRepositorio.coger = false;
@@ -438,11 +440,11 @@ public class conectado extends AppCompatActivity {
      ***********************************************************************/
     public void Coger(View view){
         //Log.i("COGER","Inicio proceso "+ miRepositorio.coger);
-        milatrun.setImageResource(R.drawable.ic_cblanco);
+        milatrun.setImageResource(R.drawable.latido_4);
         //Log.i("Timbre_con_coger","pregunta si timbre y no coger | " + miRepositorio.timbre);
-        if(miRepositorio.timbre && !miRepositorio.coger){
+        if(miRepositorio.llamada && !miRepositorio.coger){
             miRepositorio.coger = true;
-            miRepositorio.timbre = false;
+            miRepositorio.llamada = false;
             //Log.i("Timbre_con_coger","timbre a false | " + miRepositorio.timbre);
             btnCoger.setBackgroundColor(0xFFD6D7D7);
         }
@@ -594,10 +596,10 @@ public class conectado extends AppCompatActivity {
          ***********************************************************************/
         @Override
         protected void onProgressUpdate(Integer... values) {         // publishProgress()
-            if(!miRepositorio.coger)
+          //  if(!miRepositorio.coger)
                 colorPulso(values[0]);
-            else
-                colorPulso(1);
+          //  else
+          //      colorPulso(1);
         }
 
         /***********************************************************************

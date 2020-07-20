@@ -26,7 +26,7 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
-//import android.util.Log;
+import android.util.Log;
 import androidx.annotation.Nullable;
 import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
@@ -206,6 +206,7 @@ public class ServicioComunicacion extends Service {
                     //Cojo los datos y lo muestro
                     if(packetrx.getLength() > 0)
                     {
+                        miRepositorio.pulso = true;
                         //Log.i("LOG_TAG_RECIBIR", "Recibir, Packete mayor de 0");
                         if((bufrx[1] & miRepositorio.PUERTA)  != 0)
                         {
@@ -232,6 +233,7 @@ public class ServicioComunicacion extends Service {
                     }
 
                 } catch (SocketTimeoutException e) {
+                    miRepositorio.pulso = false;
                     //Log.e("FIN_THREAD_RECIBIR", "Recibir, SocketToutException: " + e.toString());
                 } catch (SocketException e) {
 
@@ -272,6 +274,7 @@ public class ServicioComunicacion extends Service {
             miRepositorio.coger = false;
             miRepositorio.comunicacion = false;
             miRepositorio.colgar = true;
+
             //Log.i("Colgar_serv_AudioRe","onPostExecute colgar =true| " + miRepositorio.colgar);
 
             switch (result){
@@ -324,11 +327,11 @@ public class ServicioComunicacion extends Service {
                 CustomMessageEvent event = new CustomMessageEvent();
                 event.setCustomMessage("Timbre iniciando");
                 EventBus.getDefault().post(event);
-                //Log.i("LOG_TAG_ENVIAR", "Enviar, Pausar Alarma");
+           //     Log.i("LOG_TAG_ENVIAR", "Enviar, Pausar Alarma");
             }
 
             // Create an instance of the AudioRecord class
-            //Log.i("LOG_ENVIAR", "Enviar, Inicio del thread asincrono Audio enviar");
+            Log.i("LOG_ENVIAR", "Enviar, Inicio del thread asincrono Audio enviar");
             int bytes_read;
             int secuencia = 0;
             //int bytes_sent = 0;
@@ -338,15 +341,17 @@ public class ServicioComunicacion extends Service {
             cmg711 codec = new cmg711();
 
             // Create a socket and start recording
-            //Log.i("LOG_ENVIAR", "Enviar, Packet destination: " + miRepositorio.address.toString());
+
             miRepositorio.audioRecorder.startRecording();
+    //        Log.i("LOG_ENVIAR", "audio iniciado, Packet destination: " + miRepositorio.address.toString());
+/*
             try {
                 miRepositorio.misocket.setSoTimeout(1000);
             } catch (SocketException e) {
-                //Log.e("FIN_THREAD_ENVIAR", "Enviar, setSoTimeout, SocketToutException: " + e.toString());
+                Log.e("FIN_THREAD_ENVIAR", "Enviar, setSoTimeout, SocketToutException: " + e.toString());
             }
-
-            //Log.i("LOG_ENVIAR", "Enviar, Packet destination: " + miRepositorio.address.toString());
+*/
+    //        Log.i("LOG_ENVIAR", "Enviar, Packet destination: " + miRepositorio.address.toString());
 
             //Log.i("LOG_ENVIAR", "Enviar, Se inicia el envio de mensajes");
             //Log.i("Colgar_serv_AudioSe","Mientras no este colgado enviar datagramas| " + miRepositorio.colgar);
@@ -376,7 +381,7 @@ public class ServicioComunicacion extends Service {
                         break;
                     miRepositorio.misocket.send(packettx);
 
-                    //Log.i("LOG_TAG_ENVIAR", "Enviar, bytes sent: " + bytes_read + " " + secuencia);
+            //        Log.i("LOG_TAG_ENVIAR", "Enviar, bytes sent: " + bytes_read + " " + secuencia);
                     secuencia++;
                     secuencia &= 0xff;
 
@@ -504,7 +509,8 @@ public class ServicioComunicacion extends Service {
             } catch (SocketException e) {
                 //Log.e("FIN_THREAD_LATIDO", "Latido, setSoTimeout, SocketToutException: " + e.toString());
             }
-
+            miRepositorio.pulso = true;
+            miRepositorio.coger = false;
             while (true) {
                 if(!miRepositorio.latido)
                     return 1;
@@ -533,27 +539,26 @@ public class ServicioComunicacion extends Service {
                     //Log.i("LATIDO", String.format(String.format("latido recibido=>" + bufrx[0] + "=" +bufrx[1])));
 
                     //Cojo los datos y lo muestro
-                    if ((bufrx[1] & miRepositorio.TIMBRE) != 0) {
-                        miRepositorio.timbre = true;
-                        //Log.i("Timbre_serv_Tarea_Lat","Si byte bufferRe.timbre  = true, Timbre = true | " + miRepositorio.timbre);
-                        //Log.i("LATIDO", "Latido, timbre publishprogress");
-                        publishProgress(true);
-                    } else {
-                        //Log.i("Timbre_serv_Tarea_Lat","final bucle, si timbre | " + miRepositorio.timbre);
-                        if (miRepositorio.timbre && (cont == 0)) {
-                            cont ++;
-                            //Log.i("Timbre_serv_Tarea_Lat","final bucle, inicio cont timbre = true | " + miRepositorio.timbre);
-                        }
-                        if(cont>0)
-                            cont++;
-                        if(cont>2){
+                    if(packetrx.getLength() > 0) {
+                        if ((bufrx[1] & miRepositorio.TIMBRE) != 0) {
+                            miRepositorio.timbre = true;
+                            miRepositorio.llamada = true;
                             cont = 0;
-                            //Log.i("Timbre_serv_Tarea_Lat","final bucle, si timbre | " + miRepositorio.timbre);
-                            miRepositorio.timbre = false;
+                            //Log.i("Timbre_serv_Tarea_Lat","Si byte bufferRe.timbre  = true, Timbre = true | " + miRepositorio.timbre);
+                            //Log.i("LATIDO", "Latido, timbre publishprogress");
                             publishProgress(true);
+                        } else {
+                            miRepositorio.timbre = false;
+                            if (cont < 3)
+                                cont++;
+                            if (cont == 2) {
+                                //Log.i("Timbre_serv_Tarea_Lat","final bucle, si timbre | " + miRepositorio.timbre);
+                                //miRepositorio.timbre = false;
+                                publishProgress(false);
+                            }
                         }
+                        miRepositorio.pulso = true;
                     }
-                    miRepositorio.pulso = true;
 
                     //Log.i("LATIDO", "Latido, final bucle EL timbre esta a: " + miRepositorio.timbre);
                     //Log.i("LATIDO", "Latido, final bucle bytes sent: " + bytes_read + " " + secuencia);
@@ -583,13 +588,15 @@ public class ServicioComunicacion extends Service {
                     while (System.currentTimeMillis() < tiempo) {
                         Thread.sleep(20);
                         if (miRepositorio.coger) {
-                            //Log.i("LATIDO_fin", "latido, Llamada cogida, salida 2");
+                            miRepositorio.llamada = false;
+                    //        Log.i("LATIDO_fin", "latido, Llamada cogida, salida 2");
                             return 2;
                         }
                         //Log.i("Colgar_serv_Tarea_lat","final cada bucle, pregunta por colgar | " + miRepositorio.colgar);
                         if (miRepositorio.colgar) {
                             //Log.i("Colgar_serv_Tarea_lat","final cada bucle, pregunta por colgar | " + miRepositorio.colgar);
                             //Log.i("LATIDO", "latido, Llamada colgada, continua");
+                            miRepositorio.llamada = false;
                             miRepositorio.colgar = false;
                             //Log.i("Colgar_serv_Tarea_lat","final cada bucle, cambia colgar = false | " + miRepositorio.colgar);
                             break;
@@ -623,20 +630,29 @@ public class ServicioComunicacion extends Service {
             if (values[0]){
                 //Log.i("LOG_LLAMADA_LATIDO", "Latido, Timbre llamada en curso ");
                 //Log.i("LOG_LLAMADA_LATIDO", "Coger: " +  miRepositorio.coger);
-                if(miRepositorio.timbre && !miRepositorio.coger) {
-                    if ((miAlarm != null) && !miAlarm.isPlaying()) {
+
+                if(miRepositorio.llamada && !miRepositorio.coger) {
+                //    if ((miAlarm != null) && !miAlarm.isPlaying()) {
+                    if (miAlarm != null){
                         miAlarm.seekTo(0);
                         miAlarm.start();
-                        //Log.i("LOG_Timbre_LATIDO", "Latido, Timbre iniciado " + miRepositorio.timbre);
+                //        Log.i("LOG_Timbre_LATIDO", "Latido, Timbre iniciado " + miRepositorio.timbre);
                     }
                 }
                 else{
+                    miRepositorio.llamada = false;
+                    miRepositorio.colgar = true;
                     miAlarm.pause();
                 }
-                CustomMessageEvent event = new CustomMessageEvent();
-                event.setCustomMessage("Timbre iniciando");
-                EventBus.getDefault().post(event);
             }
+            else {
+                miRepositorio.llamada = false;
+                miRepositorio.colgar = true;
+                miAlarm.pause();
+            }
+            CustomMessageEvent event = new CustomMessageEvent();
+            event.setCustomMessage("Timbre iniciando");
+            EventBus.getDefault().post(event);
         }
 
         /***********************************************************************
@@ -657,6 +673,7 @@ public class ServicioComunicacion extends Service {
             miRepositorio.latido = false;
             miRepositorio.timbre = false;
             miRepositorio.colgar = false;
+            miRepositorio.llamada = false;
             miRepositorio.pulso = false;
             //Log.i("Timbre_serv_Tarea_Lat","onPostEexecute, timbre= false | " + miRepositorio.timbre);
             if((miAlarm != null) && miAlarm.isPlaying()) {

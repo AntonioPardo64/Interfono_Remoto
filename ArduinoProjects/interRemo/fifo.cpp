@@ -44,6 +44,25 @@ void iniFIFO(FIFO_t *cola){
 /***********************************************************************
  *  DESCRIPCION/DESCRIPTION:                                             
  */
+/** \b Description:  Función para vaciar la cola FIFO.
+ *                                                              \if CERO
+ *----------------------------------------------------------------------
+ * PARAMETROS                                                   \endif
+ *  \param cola: Un apuntador a una cola FIFO.
+ *                                                              \if CERO
+ * VALORES_DE_RETORNO/RETURN_VALUES:                            \endif
+ *  \return : void
+ ***********************************************************************/
+void flushFIFO(FIFO_t *cola){
+  xSemaphoreTake( cola->xSemaphore, portMAX_DELAY);
+  cola->pin = 0;
+  cola->pout = 0;
+  xSemaphoreGive( cola->xSemaphore );
+}
+
+/***********************************************************************
+ *  DESCRIPCION/DESCRIPTION:                                             
+ */
 /** \b Description:  Función para insertar un BYTE en una cola FIFO.
  *                                                              \if CERO
  *----------------------------------------------------------------------

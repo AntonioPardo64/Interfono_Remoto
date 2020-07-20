@@ -90,7 +90,7 @@ void circuitListen(){
   if(!digitalRead(PIN_TMBR))
   {
 		tmbr = 1;
-    Serial.println("TTBR");
+  //  Serial.println("TTBR");
   }
 	// Actualizar señales
 	if(dcol)
@@ -111,7 +111,7 @@ void circuitListen(){
     if(tpuerta < xTaskGetTickCount())
     {
       digitalWrite(PIN_PUER,LOW);
-      Serial.println("PUER");
+      //Serial.println("PUER");
       puer = 0;
     }
   }
@@ -126,6 +126,7 @@ void circuitListen(){
 		tmbr = 0;
 		puer = 0;
 		dcol = 0;
+  //  Serial.println("Timbre = 0, TimeOut");
 
 		comun = false;
 	}
@@ -229,7 +230,10 @@ void udpListen(AsyncUDPPacket packet){
   else
     puer_r = 0;
 	if(tmbr && (data[1] & TMBR))	// El cliente ya se ha enterado
+	{
 		tmbr = 0;
+//    Serial.println("Timbre = 0, Cliente enterado");
+	}
 	if(data[1] & DCOL){				// El cliente marca descolgado
 		dcol = 1;
 		comun = true;
@@ -330,33 +334,34 @@ void comunica(void *pvParameters){
       resp_r[0] = secuenciat & 0xff;
       secuenciat++;
       resp_r[1] = 0;
-      
+
       if(puer_r )    
         resp_r[1] |= PUER;              
       if(tmbr)
         resp_r[1] |= TMBR;
       if(dcol)    
         resp_r[1] |= DCOL;
-          
-      if(dcol){
-        len = ocupacion(&fifo_rx);
-        if (len > 2400)
-        {
-          len = 2400;
-        }
-        extraer_Bl(&fifo_rx, &resp_r[2], len);
+
+      len = ocupacion(&fifo_rx);
+      if (len > 1400)
+      {
+        len = 1400;
       }
-      else
-        len = 0;
-      
+      extraer_Bl(&fifo_rx, &resp_r[2], len);
+     
       // Enviar respuesta
       if(wiFi && p_Port)  
         udp.writeTo(resp_r,len+2,p_IP,p_Port);
     }
+    else
+    {
+      flushFIFO(&fifo_rx);
+      flushFIFO(&fifo_tx);
+    }
     // Delay de bucle
     for(i=0;i<10;i++)
     {
-		  vTaskDelay(pdMS_TO_TICKS(16));
+		  vTaskDelay(pdMS_TO_TICKS(10));
       circuitListen();
     }
 	}

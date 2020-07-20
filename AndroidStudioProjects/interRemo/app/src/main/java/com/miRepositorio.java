@@ -42,6 +42,7 @@ public class miRepositorio {
     public static boolean coger = false;
     public final static byte GOGER = 0x2;
     public static boolean timbre = false;
+    public static boolean llamada = false;
     public final static byte TIMBRE = 0x4;
     public static boolean comunicacion = false;
     public static boolean aviso = false;

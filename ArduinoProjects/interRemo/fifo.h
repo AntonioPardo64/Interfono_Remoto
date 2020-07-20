@@ -53,6 +53,20 @@ extern void iniFIFO(FIFO_t *cola);
 /***********************************************************************
  *  DESCRIPCION/DESCRIPTION:                                             
  */
+/** \b Description:  Función para vaciar la cola FIFO.
+ *                                                              \if CERO
+ *----------------------------------------------------------------------
+ * PARAMETROS                                                   \endif
+ *  \param cola: Un apuntador a una cola FIFO.
+ *                                                              \if CERO
+ * VALORES_DE_RETORNO/RETURN_VALUES:                            \endif
+ *  \return : void
+ ***********************************************************************/
+extern void flushFIFO(FIFO_t *cola);
+
+/***********************************************************************
+ *  DESCRIPCION/DESCRIPTION:                                             
+ */
 /** \b Description:  Interfaz de la función para insertar un BYTE en una 
  *  cola FIFO.
  *                                                              \if CERO
